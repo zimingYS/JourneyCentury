@@ -1,53 +1,51 @@
-use crate::world::terrain::{ChunkInstanceBuffer, InstanceData, World};
 use bevy::asset::RenderAssetUsages;
 use bevy::prelude::*;
 use bevy::render::mesh::{Indices, PrimitiveTopology};
-use bevy::render::render_resource::{BufferInitDescriptor, BufferUsages};
-use bevy::render::renderer::RenderDevice;
 use bevy::utils::HashSet;
+
+use super::{CHUNK_HEIGHT, CHUNK_SIZE, MAX_INSTANCES_PER_CHUNK};
+use bevy::prelude::*;
+use bevy::render::render_resource::Buffer;
+use crate::blocks::types::BlockType;
+
+// 实例化数据
+#[repr(C)]
+#[derive(Component, Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
+pub struct InstanceData {
+    pub position: [f32; 3],
+    pub block_type: u32,
+}
+
+// GPU缓冲组件
+#[derive(Component)]
+pub struct ChunkInstanceBuffer {
+    pub buffer: Buffer,
+    pub length: u32,
+}
+
+// 区块数据结构
+#[derive(Clone)]
+pub struct Chunk {
+    pub blocks: [[[BlockType; CHUNK_HEIGHT]; CHUNK_SIZE]; CHUNK_SIZE],
+    pub instance_data: Vec<InstanceData>,
+    pub mesh_handle: Handle<Mesh>,
+}
+
+impl Chunk {
+    pub fn new() -> Self {
+        Self {
+            blocks: [[[BlockType::Air; CHUNK_HEIGHT]; CHUNK_SIZE]; CHUNK_SIZE],
+            instance_data: Vec::with_capacity(MAX_INSTANCES_PER_CHUNK),
+            mesh_handle: Handle::default(),
+        }
+    }
+}
+
+
 
 // 每帧最多生成 100 个方块（可调整）
 const MAX_BLOCKS_PER_FRAME: usize = 100;
 
-pub fn render_chunks(
-    mut commands: Commands,
-    world: Res<World>,
-    mut render_device: ResMut<RenderDevice>,
-    mut query: Query<Entity, With<ChunkInstanceBuffer>>,
-) {
-    //检查world是否更新
-    if !world.is_changed() {
-        return;
-    }
-
-    // 清除所有旧的区块实体
-    for entity in &mut query {
-        commands.entity(entity).despawn();
-    }
-
-    // 生成新的区块实体
-    for chunk in &world.chunks {
-        // 创建 GPU 缓冲区
-        let buffer = render_device.create_buffer_with_data(&BufferInitDescriptor {
-            label: Some("chunk instance buffer"),
-            contents: bytemuck::cast_slice(&chunk.instance_data),
-            usage: BufferUsages::VERTEX | BufferUsages::COPY_DST,
-        });
-
-        commands.spawn((
-            MaterialMeshBundle {
-                mesh: Mesh3d::from(chunk.mesh_handle.clone()),
-                material: MeshMaterial3d::from(world.material_map.clone()),
-                transform: Transform::IDENTITY,
-                ..default()
-            },
-            ChunkInstanceBuffer {
-                buffer,
-                length: chunk.instance_data.len() as u32,
-            },
-        ));
-    }
-}
 
 #[derive(PartialEq, Eq, Hash)]
 struct BlockKey {

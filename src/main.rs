@@ -1,9 +1,7 @@
 use bevy::prelude::*;
 use bevy::window::{CursorGrabMode, CursorOptions};
-
-mod player;
-mod world;
-mod rendering;
+use JourneyCentury::{player, world};
+use JourneyCentury::world::WorldPlugin;
 
 fn main() {
     App::new()
@@ -26,12 +24,13 @@ fn main() {
         ))
         .add_systems(Startup, (
             player::spawn_player,
-            world::terrain::setup_world,
+            // world::systems::setup::setup_world,
         ))
         .add_systems(Update, (
             player::input::keyboard_movement,
             player::camera::mouse_look,
-            world::chunk::render_chunks,
+            // world::systems::rendering::render_chunks,
         ))
+        .add_plugins(WorldPlugin)
         .run();
 }
