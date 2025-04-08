@@ -1,0 +1,2 @@
+# JourneyCentury
+一款基于bevy引擎开发的开放世界体素游戏
