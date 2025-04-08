@@ -1,3 +1,4 @@
 pub mod setup;
 pub mod rendering;
-pub(crate) mod loading;
+pub mod loading;
+pub mod sunlight;

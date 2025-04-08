@@ -3,7 +3,7 @@ use crate::player::Player;
 use crate::world::chunk::{build_greedy_mesh, Chunk, InstanceData};
 use crate::world::{terrain, CHUNK_HEIGHT, CHUNK_SIZE};
 use bevy::prelude::*;
-use noise::{NoiseFn, Perlin};
+use noise::{Fbm, MultiFractal, NoiseFn, Perlin};
 
 pub fn update_loaded_chunks(
     mut world: ResMut<terrain::World>,
@@ -55,7 +55,7 @@ pub fn process_generation_queue(
     const MAX_PER_FRAME: usize = 2;
     for _ in 0..MAX_PER_FRAME {
         if let Some((x, z)) = world.generation_queue.pop_front() {
-            let chunk = generate_chunk(x, z, &world.noise, &mut meshes);
+            let chunk = generate_chunk(x, z, world.seed, &mut meshes);
             world.chunks.insert((x, z), chunk);
         } else {
             break;
@@ -66,18 +66,31 @@ pub fn process_generation_queue(
 fn generate_chunk(
     x: i32,
     z: i32,
-    noise: &Perlin,
+    seed: u32,
     meshes: &mut Assets<Mesh>,
 ) -> Chunk {
     let mut blocks = [[[BlockType::Air; CHUNK_HEIGHT]; CHUNK_SIZE]; CHUNK_SIZE];
     let mut instance_data = Vec::new();
+
+    let noise = Perlin::new(seed);
+    let fbm = Fbm::<Perlin>::new(seed+1) // 使用Perlin作为基础噪声
+        .set_octaves(3)          // 3个倍频
+        .set_persistence(0.5);   // 持久性参数
 
     for local_x in 0..CHUNK_SIZE {
         for local_z in 0..CHUNK_SIZE {
             let world_x = x * CHUNK_SIZE as i32 + local_x as i32;
             let world_z = z * CHUNK_SIZE as i32 + local_z as i32;
 
-            let height = ((noise.get([world_x as f64 / 50.0, world_z as f64 / 50.0]) * 40.0) + 60.0) as usize;
+            let base_noise = noise.get([world_x as f64 / 150.0, world_z as f64 / 150.0]);
+
+            // 添加分形噪声（叠加多层噪声）
+            let fractal = fbm.get([world_x as f64 / 80.0, world_z as f64 / 80.0]);  // 3个倍频
+
+            // 组合噪声并限制高度范围
+            let height = ((base_noise * 25.0 + fractal * 15.0) + 80.0) as usize;
+
+            // let height = ((noise.get([world_x as f64 / 50.0, world_z as f64 / 50.0]) * 40.0) + 60.0) as usize;
 
             for y in 0..height.min(CHUNK_HEIGHT - 1) {
                 blocks[local_x][local_z][y] = match y {

@@ -11,7 +11,7 @@ use super::{chunk::Chunk};
 pub struct World {
     pub chunks: HashMap<(i32, i32), Chunk>,
     pub material: Handle<StandardMaterial>,
-    pub noise: Perlin,
+    pub seed: u32,
     pub generation_queue: VecDeque<(i32, i32)>,
 }
 
