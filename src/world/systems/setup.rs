@@ -56,7 +56,7 @@ pub fn setup_world(
                     for y in 0..height.min(CHUNK_HEIGHT- 1) {
                         blocks[x][z][y] = match y {
                             h if h == height - 1 => BlockType::Grass,
-                            h if h > height.saturating_sub(4) => BlockType::Dirt,
+                            h if h > height.saturating_sub(6) => BlockType::Dirt,
                             _ => BlockType::Stone,
                         };
 

@@ -59,6 +59,7 @@ pub fn  build_greedy_mesh(instance_data: &[InstanceData]) -> Mesh {
     let mut normals = Vec::new();
     let mut uvs = Vec::new();
     let mut indices = Vec::new();
+    let mut colors = Vec::new();
 
     let blocks: HashSet<BlockKey> = instance_data.iter()
         .map(|i| BlockKey {
@@ -85,6 +86,8 @@ pub fn  build_greedy_mesh(instance_data: &[InstanceData]) -> Mesh {
             (0, 0, 1, Vec3::Z),    // 前（Z+方向）
             (0, 0, -1, Vec3::NEG_Z), // 后（Z-方向）
         ];
+
+        let block_color = get_block_color(instance.block_type);
 
         //检查六个相邻方向
         for (dx, dy, dz, normal) in directions {
@@ -119,6 +122,9 @@ pub fn  build_greedy_mesh(instance_data: &[InstanceData]) -> Mesh {
                     base_index, base_index + 1, base_index + 2,
                     base_index, base_index + 2, base_index + 3,
                 ]);
+
+                //方块颜色
+                colors.extend(vec![block_color; 4]);
             }
         }
     }
@@ -127,6 +133,7 @@ pub fn  build_greedy_mesh(instance_data: &[InstanceData]) -> Mesh {
     mesh.insert_attribute(Mesh::ATTRIBUTE_NORMAL, normals);
     mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
     mesh.insert_indices(Indices::U32(indices));
+    mesh.insert_attribute(Mesh::ATTRIBUTE_COLOR, colors);
     mesh
 }
 
@@ -192,4 +199,13 @@ fn get_uv_coords(block_type: u32) -> (f32, f32, f32, f32) {
     let v_max = v_min + tile_size;
 
     (u_min, v_min, u_max, v_max)
+}
+
+fn get_block_color(block_type: u32) -> [f32; 4] {
+    match block_type {
+        1 => [0.0, 1.0, 0.0, 1.0], // 草方块（绿色）
+        2 => [0.6, 0.3, 0.1, 1.0], // 泥土（棕色）
+        3 => [0.5, 0.5, 0.5, 1.0], // 石头（灰色）
+        _ => [1.0, 1.0, 1.0, 1.0], // 默认白色
+    }
 }
