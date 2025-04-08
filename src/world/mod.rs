@@ -18,9 +18,12 @@ pub struct WorldPlugin;
 
 impl Plugin for WorldPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, (
-            systems::setup::setup_world,
-        ))
-            .add_systems(Update, systems::rendering::render_chunks);
+        app
+            .add_systems(Startup, systems::setup::setup_world)
+            .add_systems(Update, (
+                systems::loading::update_loaded_chunks,
+                systems::loading::process_generation_queue,
+                systems::rendering::render_chunks,
+            ));
     }
 }

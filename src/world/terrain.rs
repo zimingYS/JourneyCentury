@@ -1,24 +1,22 @@
+use std::collections::VecDeque;
 use bevy::prelude::*;
+use bevy::utils::HashMap;
 use noise::Perlin;
 use super::{chunk::Chunk};
 
 // 世界资源
+
+
 #[derive(Resource)]
 pub struct World {
-    pub chunks: Vec<Chunk>,
+    pub chunks: HashMap<(i32, i32), Chunk>,
     pub material: Handle<StandardMaterial>,
     pub noise: Perlin,
+    pub generation_queue: VecDeque<(i32, i32)>,
 }
 
-impl World {
-    pub fn new(material: Handle<StandardMaterial>, noise_seed: u32) -> Self {
-        Self {
-            chunks: Vec::new(),
-            material,
-            noise: Perlin::new(noise_seed),
-        }
-    }
-}
+#[derive(Component)]
+pub struct ChunkCoord(pub i32, pub i32); //跟踪区快坐标
 
 
 // use crate::world::chunk::build_greedy_mesh;
