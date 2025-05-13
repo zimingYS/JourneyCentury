@@ -1,10 +1,10 @@
-use bevy::pbr::{MeshMaterial3d, PbrBundle};
-use bevy::prelude::{default, Commands, DetectChanges, Entity, Mesh3d, Query, Res, ResMut, Transform, With};
+use std::collections::HashSet;
+use crate::world::terrain::ChunkCoord;
+use crate::world::{ChunkInstanceBuffer, World};
+use bevy::pbr::MeshMaterial3d;
+use bevy::prelude::{default, Commands, Entity, Mesh3d, Query, Res, ResMut};
 use bevy::render::render_resource::{BufferInitDescriptor, BufferUsages};
 use bevy::render::renderer::RenderDevice;
-use bevy::utils::HashSet;
-use crate::world::{terrain, ChunkInstanceBuffer, World};
-use crate::world::terrain::ChunkCoord;
 
 pub fn render_chunks(
     mut commands: Commands,
@@ -33,11 +33,8 @@ pub fn render_chunks(
         });
 
         commands.spawn((
-            PbrBundle {
-                mesh: Mesh3d::from(chunk.mesh_handle.clone()),
-                material: MeshMaterial3d::from(world.material.clone()),
-                ..default()
-            },
+            Mesh3d::from(chunk.mesh_handle.clone()),
+            MeshMaterial3d::from(world.material.clone()),
             ChunkCoord(*x, *z),
             ChunkInstanceBuffer {
                 buffer,

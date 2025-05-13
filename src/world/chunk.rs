@@ -1,8 +1,7 @@
+use std::collections::HashSet;
 use bevy::asset::RenderAssetUsages;
 use bevy::prelude::*;
 use bevy::render::mesh::{Indices, PrimitiveTopology};
-use bevy::utils::HashSet;
-
 use super::{CHUNK_HEIGHT, CHUNK_SIZE, MAX_INSTANCES_PER_CHUNK};
 use bevy::prelude::*;
 use bevy::render::render_resource::Buffer;

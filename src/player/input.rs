@@ -15,10 +15,10 @@ pub fn keyboard_movement(
     let mut direction = Vec3::ZERO;
 
     // 前后左右移动（基于玩家当前朝向）
-    if keyboard.pressed(KeyCode::KeyW) { direction.x -= 1.0 }
-    if keyboard.pressed(KeyCode::KeyS) { direction.x += 1.0 }
-    if keyboard.pressed(KeyCode::KeyA) { direction.z -= 1.0 }
-    if keyboard.pressed(KeyCode::KeyD) { direction.z += 1.0 }
+    if keyboard.pressed(KeyCode::KeyW) { direction.z += 1.0 }
+    if keyboard.pressed(KeyCode::KeyS) { direction.z -= 1.0 }
+    if keyboard.pressed(KeyCode::KeyA) { direction.x -= 1.0 }
+    if keyboard.pressed(KeyCode::KeyD) { direction.x += 1.0 }
 
     // 垂直升降控制
     if keyboard.pressed(KeyCode::Space) { direction.y += 1.0 }

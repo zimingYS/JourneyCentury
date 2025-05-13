@@ -1,6 +1,5 @@
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
 use bevy::prelude::*;
-use bevy::utils::HashMap;
 use noise::{NoiseFn, Perlin};
 use rand::Rng;
 use crate::world::terrain;
@@ -10,7 +9,7 @@ pub fn setup_world(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     let material = materials.add(StandardMaterial {
-        base_color: Color::rgb(0.8, 0.7, 0.6),
+        base_color: Color::srgb(0.8, 0.7, 0.6),
         perceptual_roughness: 0.9,
         ..default()
     });

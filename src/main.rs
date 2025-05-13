@@ -20,7 +20,6 @@ fn main() {
                 ..default()
             }),
             bevy::diagnostic::LogDiagnosticsPlugin::default(),
-            bevy::diagnostic::FrameTimeDiagnosticsPlugin,
         ))
         .add_systems(Startup, (
             player::spawn_player,

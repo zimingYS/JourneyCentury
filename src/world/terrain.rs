@@ -1,7 +1,5 @@
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
 use bevy::prelude::*;
-use bevy::utils::HashMap;
-use noise::Perlin;
 use super::{chunk::Chunk};
 
 // 世界资源
