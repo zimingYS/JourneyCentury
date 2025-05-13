@@ -1,6 +1,6 @@
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
-use crate::player::Player;
+use crate::player::init::Player;
 
 #[derive(Component)]
 pub struct PlayerCamera;
@@ -17,8 +17,8 @@ pub fn mouse_look(
     }
 
     let sensitivity = 0.001;
-    if let Ok(mut player_transform) = player_query.get_single_mut() {
-        if let Ok(mut camera_transform) = camera_query.get_single_mut() {
+    if let Ok(mut player_transform) = player_query.single_mut() {
+        if let Ok(mut camera_transform) = camera_query.single_mut() {
             // 水平旋转作用于玩家
             player_transform.rotate_y(-rotation.x * sensitivity);
 

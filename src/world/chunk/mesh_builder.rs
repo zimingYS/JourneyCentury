@@ -1,50 +1,7 @@
-use std::collections::HashSet;
 use bevy::asset::RenderAssetUsages;
 use bevy::prelude::*;
 use bevy::render::mesh::{Indices, PrimitiveTopology};
-use super::{CHUNK_HEIGHT, CHUNK_SIZE, MAX_INSTANCES_PER_CHUNK};
-use bevy::prelude::*;
-use bevy::render::render_resource::Buffer;
-use crate::blocks::types::BlockType;
-
-// 实例化数据
-#[repr(C)]
-#[derive(Component, Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
-pub struct InstanceData {
-    pub position: [f32; 3],
-    pub block_type: u32,
-}
-
-// GPU缓冲组件
-#[derive(Component)]
-pub struct ChunkInstanceBuffer {
-    pub buffer: Buffer,
-    pub length: u32,
-}
-
-// 区块数据结构
-#[derive(Clone)]
-pub struct Chunk {
-    pub blocks: [[[BlockType; CHUNK_HEIGHT]; CHUNK_SIZE]; CHUNK_SIZE],
-    pub instance_data: Vec<InstanceData>,
-    pub mesh_handle: Handle<Mesh>,
-}
-
-impl Chunk {
-    pub fn new() -> Self {
-        Self {
-            blocks: [[[BlockType::Air; CHUNK_HEIGHT]; CHUNK_SIZE]; CHUNK_SIZE],
-            instance_data: Vec::with_capacity(MAX_INSTANCES_PER_CHUNK),
-            mesh_handle: Handle::default(),
-        }
-    }
-}
-
-
-
-// 每帧最多生成 100 个方块（可调整）
-const MAX_BLOCKS_PER_FRAME: usize = 100;
-
+use crate::world::chunk::init::InstanceData;
 
 #[derive(PartialEq, Eq, Hash)]
 struct BlockKey {
@@ -52,15 +9,16 @@ struct BlockKey {
     y: i32,
     z: i32,
 }
-pub fn  build_greedy_mesh(instance_data: &[InstanceData]) -> Mesh {
-    let mut mesh = Mesh::new(PrimitiveTopology::TriangleList,RenderAssetUsages::default());
+
+pub fn build_greedy_mesh(instance_data: &[InstanceData]) -> Mesh {
+    let mut mesh = Mesh::new(PrimitiveTopology::TriangleList, RenderAssetUsages::default());
     let mut positions = Vec::new();
     let mut normals = Vec::new();
     let mut uvs = Vec::new();
     let mut indices = Vec::new();
     let mut colors = Vec::new();
 
-    let blocks: HashSet<BlockKey> = instance_data.iter()
+    let blocks: std::collections::HashSet<BlockKey> = instance_data.iter()
         .map(|i| BlockKey {
             x: i.position[0] as i32,
             y: i.position[1] as i32,
@@ -88,10 +46,9 @@ pub fn  build_greedy_mesh(instance_data: &[InstanceData]) -> Mesh {
 
         let block_color = get_block_color(instance.block_type);
 
-        //检查六个相邻方向
+        // 检查六个相邻方向
         for (dx, dy, dz, normal) in directions {
             let neighbor_pos = (pos.0 + dx, pos.1 + dy, pos.2 + dz);
-            //如果相邻位置没有方块，则生成该面
             if !blocks.contains(&BlockKey {
                 x: neighbor_pos.0,
                 y: neighbor_pos.1,
@@ -101,13 +58,9 @@ pub fn  build_greedy_mesh(instance_data: &[InstanceData]) -> Mesh {
                 let vertices = generate_face_vertices(pos, normal);
                 let base_index = positions.len() as u32;
 
-                // 顶点位置
                 positions.extend(vertices.iter().map(|v| *v));
-
-                // 法线 (所有顶点相同)
                 normals.extend(vec![normal; 4]);
 
-                // UV 坐标 (根据方块类型调整)
                 let uv = get_uv_coords(instance.block_type);
                 uvs.extend(vec![
                     [uv.0, uv.1],     // 左下
@@ -116,13 +69,11 @@ pub fn  build_greedy_mesh(instance_data: &[InstanceData]) -> Mesh {
                     [uv.0, uv.3],     // 左上
                 ]);
 
-                // 索引
                 indices.extend(&[
                     base_index, base_index + 1, base_index + 2,
                     base_index, base_index + 2, base_index + 3,
                 ]);
 
-                //方块颜色
                 colors.extend(vec![block_color; 4]);
             }
         }

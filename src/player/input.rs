@@ -1,12 +1,12 @@
 use bevy::prelude::*;
-use crate::player::Player;
+use crate::player::init::Player;
 
 pub fn keyboard_movement(
     mut query: Query<&mut Transform, With<Player>>,
     keyboard: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
 ) {
-    let Ok(mut transform) = query.get_single_mut() else {
+    let Ok(mut transform) = query.single_mut() else {
         warn!("Player entity not found!");
         return;
     };

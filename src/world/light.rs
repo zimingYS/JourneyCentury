@@ -1,4 +1,3 @@
-use bevy::asset::AssetContainer;
 use bevy::prelude::*;
 
 pub fn setup_lighting(mut commands: Commands) {
@@ -12,13 +11,13 @@ pub fn setup_lighting(mut commands: Commands) {
             shadow_normal_bias: 1.2,            // 修复阴影偏移
             ..default()
         },
-        Transform::from_rotation(Quat::from_euler(
-            EulerRot::XYZ,
-            -45.0f32.to_radians(), // 俯角
-            45.0f32.to_radians(),  // 水平角度
-            0.0,)
-        )
-    ));
+         Transform::from_rotation(Quat::from_euler(
+             EulerRot::XYZ,
+             -45.0f32.to_radians(), // 俯角
+             45.0f32.to_radians(),  // 水平角度
+             0.0,)
+         )
+        ));
 
     // 环境光（整体基础照明）
     commands.insert_resource(AmbientLight {
