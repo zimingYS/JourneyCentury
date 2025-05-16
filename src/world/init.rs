@@ -17,8 +17,9 @@ pub const LOAD_RADIUS: i32 = 8;
 // 每帧最多生成 100 个方块（可调整）
 pub const MAX_BLOCKS_PER_FRAME: usize = 100;
 
-// 每帧渲染最大区块数
+// 每帧渲染最大区块数和脏区块处理数
 pub const MAX_PER_FRAME: usize = 2;
+
 
 pub fn setup_world(
     mut commands: Commands,

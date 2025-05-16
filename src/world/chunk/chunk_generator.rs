@@ -51,5 +51,6 @@ pub fn generate_chunk(
         blocks,
         instance_data,
         mesh_handle: meshes.add(mesh),
+        is_dirty: false,
     }
 }

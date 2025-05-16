@@ -1,4 +1,7 @@
+use bevy::ecs::entity::unique_slice::Windows;
+use bevy::input::mouse::MouseButtonInput;
 use bevy::prelude::*;
+use crate::player::camera::PlayerCamera;
 use crate::player::init::Player;
 
 pub fn keyboard_movement(

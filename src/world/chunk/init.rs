@@ -23,6 +23,7 @@ pub struct Chunk {
     pub blocks: [[[BlockType; CHUNK_HEIGHT]; CHUNK_SIZE]; CHUNK_SIZE],
     pub instance_data: Vec<InstanceData>,
     pub mesh_handle: Handle<Mesh>,
+    pub(crate) is_dirty: bool,
 }
 
 // 世界资源
@@ -43,6 +44,11 @@ impl Chunk {
             blocks: [[[BlockType::Air; CHUNK_HEIGHT]; CHUNK_SIZE]; CHUNK_SIZE],
             instance_data: Vec::with_capacity(MAX_INSTANCES_PER_CHUNK),
             mesh_handle: Handle::default(),
+            is_dirty: false,
         }
+    }
+
+    pub fn mark_dirty(&mut self){
+        self.is_dirty = true;
     }
 }
