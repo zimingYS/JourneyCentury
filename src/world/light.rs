@@ -2,7 +2,7 @@ use std::f32::consts::PI;
 use bevy::prelude::*;
 use bevy::prelude::light_consts::lux;
 
-pub fn setup_lighting(mut commands: Commands) {
+pub fn setup_suns(mut commands: Commands) {
     // 主方向光（模拟太阳）
     commands.spawn((
         DirectionalLight {
@@ -49,7 +49,7 @@ pub fn setup_lighting(mut commands: Commands) {
     // });
 }
 
-pub fn adjust_lighting(
+pub fn adjust_suns(
     time: Res<Time>,
     mut query: Query<(&mut Transform, &Name), With<DirectionalLight>>,
 ) {
