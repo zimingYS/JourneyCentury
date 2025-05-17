@@ -14,15 +14,15 @@ pub struct WorldPlugin;
 impl Plugin for WorldPlugin {
     fn build(&self, app: &mut App) {
         app
-            .add_systems(Startup,
+            .add_systems(Startup, (
                 init::setup_world,
-            )
-            .add_systems(Startup,setup_suns)
+                setup_suns
+            ))
             .add_systems(Update, (
                 update_loaded_chunks,
                 process_generation_queue,
-                render_chunks,
                 adjust_suns,
+                render_chunks,
                 update_dirty_chunks,
             ));
     }

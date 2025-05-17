@@ -4,7 +4,7 @@ use crate::world::init::{CHUNK_HEIGHT, CHUNK_SIZE, MAX_INSTANCES_PER_CHUNK};
 
 // 实例化数据
 #[repr(C)]
-#[derive(Component, Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
+#[derive(Component, Clone, Copy, bytemuck::Pod, bytemuck::Zeroable, Debug)]
 pub struct InstanceData {
     pub position: [f32; 3],
     pub block_type: u32,
@@ -25,16 +25,6 @@ pub struct Chunk {
     pub mesh_handle: Handle<Mesh>,
     pub(crate) is_dirty: bool,
 }
-
-// 世界资源
-#[derive(Resource)]
-pub struct World {
-    pub chunks: std::collections::HashMap<(i32, i32), Chunk>,
-    pub material: Handle<StandardMaterial>,
-    pub seed: u32,
-    pub generation_queue: std::collections::VecDeque<(i32, i32)>,
-}
-
 #[derive(Component)]
 pub struct ChunkCoord(pub i32, pub i32); // 跟踪区块坐标
 

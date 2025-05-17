@@ -1,8 +1,14 @@
+use std::fmt::Pointer;
 use bevy::ecs::entity::unique_slice::Windows;
 use bevy::input::mouse::MouseButtonInput;
+use bevy::math::FloatOrd;
 use bevy::prelude::*;
-use crate::player::camera::PlayerCamera;
+use bevy::tasks::futures_lite::StreamExt;
+use crate::player::camera::{raycast, PlayerCamera};
 use crate::player::init::Player;
+use crate::{blocks, world};
+use crate::blocks::types::BlockType;
+use crate::world::init::{CHUNK_HEIGHT, CHUNK_SIZE};
 
 pub fn keyboard_movement(
     mut query: Query<&mut Transform, With<Player>>,
@@ -39,5 +45,28 @@ pub fn keyboard_movement(
             .normalize_or_zero();
 
         transform.translation += move_vector * speed * time.delta_secs();
+    }
+}
+// 最大破坏距离
+const MAX_DESTROY_DISTANCE: f32 = 5.0;
+pub fn mouse_input(
+    camera_query: Query<(&Camera, &GlobalTransform)>,
+    mouse: Res<ButtonInput<MouseButton>>,
+    mut world: ResMut<world::init::World>,
+){
+    if mouse.just_pressed(MouseButton::Left) {
+        let (_camera, camera_transform) = camera_query.single().unwrap();
+        let ray_pos = camera_transform.translation();
+        let ray_dir = camera_transform.forward();
+        let ray = Ray3d::new(ray_pos,ray_dir);
+        if let Some(block_pos) = raycast(ray, &world, MAX_DESTROY_DISTANCE) {
+            println!("Raycast hit block at: {:?}", block_pos);
+            // 破坏方块（将对应位置设为空气）
+            world.set_block(block_pos.0,block_pos.1,block_pos.2,BlockType::Air);
+            let chunk_x = block_pos.0.div_euclid(CHUNK_SIZE as i32);
+            let chunk_z = block_pos.2.div_euclid(CHUNK_SIZE as i32);
+            world.mark_chunk_dirty(chunk_x,chunk_z);
+        }
+        println!("Ray origin: {:?}, direction: {:?}", ray.origin, ray.direction);
     }
 }

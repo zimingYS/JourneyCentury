@@ -53,7 +53,7 @@ pub fn adjust_suns(
     time: Res<Time>,
     mut query: Query<(&mut Transform, &Name), With<DirectionalLight>>,
 ) {
-    let day_length_s = 10.0;
+    let day_length_s = 100.0;
     let t = (time.elapsed_secs() - 1.0).max(0.0) + day_length_s * 0.3;
     let earth_tilt_rad = PI / 3.0;
     let day_fract = ((t % day_length_s) / day_length_s).clamp(0.0, 1.0);

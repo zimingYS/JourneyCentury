@@ -13,6 +13,7 @@ impl Plugin for PlayerPlugin {
         ))
         .add_systems(Update, (
             input::keyboard_movement,
+            input::mouse_input,
             camera::mouse_look,
         ));
     }

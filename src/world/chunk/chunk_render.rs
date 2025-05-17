@@ -1,12 +1,12 @@
-use crate::world::chunk;
 use crate::world::chunk::init::{ChunkCoord, ChunkInstanceBuffer};
 use bevy::prelude::*;
 use bevy::render::render_resource::{BufferInitDescriptor, BufferUsages};
 use bevy::render::renderer::RenderDevice;
+use crate::world;
 
 pub fn render_chunks(
     mut commands: Commands,
-    world: Res<chunk::init::World>,
+    world: Res<world::init::World>,
     render_device: ResMut<RenderDevice>,
     chunk_query: Query<(Entity, &ChunkCoord)>,
 ) {

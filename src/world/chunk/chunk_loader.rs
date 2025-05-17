@@ -1,11 +1,11 @@
 use bevy::prelude::*;
 use crate::player::init::Player;
-use crate::world::chunk;
+use crate::world;
 use crate::world::chunk::chunk_generator::generate_chunk;
 use crate::world::init::{CHUNK_SIZE, LOAD_RADIUS, MAX_PER_FRAME};
 
 pub fn update_loaded_chunks(
-    mut world: ResMut<chunk::init::World>,
+    mut world: ResMut<world::init::World>,
     player_query: Query<&Transform, With<Player>>,
 ) {
     let Ok(player_transform) = player_query.single() else { return };
@@ -46,7 +46,7 @@ pub fn update_loaded_chunks(
 }
 
 pub fn process_generation_queue(
-    mut world: ResMut<chunk::init::World>,
+    mut world: ResMut<world::init::World>,
     mut meshes: ResMut<Assets<Mesh>>,
 ) {
     for _ in 0..MAX_PER_FRAME {
