@@ -1,6 +1,6 @@
+use crate::player::camera::PlayerCamera;
 use bevy::pbr::{Atmosphere, AtmosphereSettings};
 use bevy::prelude::*;
-use crate::player::camera::PlayerCamera;
 
 #[derive(Component)]
 pub struct Player;
@@ -8,7 +8,7 @@ pub struct Player;
 pub fn spawn_player(mut commands: Commands) {
     commands.spawn((
         Player,
-        Transform::from_xyz(0.0, 70.0, 0.0), // 玩家初始位置保持不变
+        Transform::from_xyz(0.0, 50.0, 0.0), // 玩家初始位置保持不变
         Name::new("Player"),
     )).with_children(|parent| { // 添加子实体（摄像机）
         parent.spawn((
@@ -23,7 +23,7 @@ pub fn spawn_player(mut commands: Commands) {
             AtmosphereSettings {
                 ..Default::default()
             },
-            Transform::from_xyz(0.0, 71.8, 0.0).looking_at(Vec3::NEG_Z, Vec3::Y),
+            Transform::from_xyz(0.0, 51.8, 0.0).looking_at(Vec3::NEG_Z, Vec3::Y),
             PlayerCamera,
         ));
     });

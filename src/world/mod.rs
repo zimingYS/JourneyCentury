@@ -5,7 +5,6 @@ mod light;
 use bevy::prelude::*;
 use crate::world::chunk::chunk_loader::{process_generation_queue, update_loaded_chunks};
 use crate::world::chunk::chunk_render::render_chunks;
-use crate::world::chunk::chunk_update::update_dirty_chunks;
 use crate::world::light::{adjust_suns, setup_suns};
 
 // 世界插件
@@ -23,7 +22,6 @@ impl Plugin for WorldPlugin {
                 process_generation_queue,
                 adjust_suns,
                 render_chunks,
-                update_dirty_chunks,
             ));
     }
 }
